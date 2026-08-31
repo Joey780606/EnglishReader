@@ -1,0 +1,158 @@
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: "Microsoft JhengHei", "Segoe UI", sans-serif;
+  background: #f5f5f5;
+}
+
+.reader-page {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+}
+
+.top-tabs {
+  display: flex;
+  background: #2c3e50;
+  padding: 8px 16px;
+}
+
+.top-tab {
+  background: none;
+  border: none;
+  color: #cfd8dc;
+  padding: 8px 16px;
+  cursor: pointer;
+}
+
+.top-tab-active {
+  color: white;
+  border-bottom: 2px solid #4caf50;
+}
+
+.upload-bar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  background: white;
+  border-bottom: 1px solid #ddd;
+}
+
+.upload-button {
+  background: #4caf50;
+  color: white;
+  padding: 8px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.error-banner {
+  background: #ffebee;
+  color: #c62828;
+  padding: 8px 16px;
+}
+
+.panels-row {
+  flex: 1;
+  display: flex;
+  gap: 12px;
+  padding: 12px;
+  overflow: hidden;
+}
+
+.panel {
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  overflow-y: auto;
+}
+
+.panel-title {
+  font-weight: bold;
+  border-bottom: 1px solid #eee;
+  padding-bottom: 4px;
+}
+
+.document-viewer {
+  flex: 3;
+}
+
+.selected-word-panel {
+  flex: 1;
+}
+
+.translation-result-panel {
+  flex: 2;
+}
+
+.toolbar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.bookmark-bar {
+  display: flex;
+  gap: 12px;
+}
+
+.bookmark-slot {
+  display: flex;
+  gap: 4px;
+}
+
+.document-content {
+  flex: 1;
+  overflow-y: auto;
+  line-height: 1.8;
+  white-space: pre-wrap;
+}
+
+.clickable-word {
+  cursor: pointer;
+}
+
+.clickable-word:hover {
+  background: #fff59d;
+}
+
+.placeholder-text {
+  color: #999;
+}
+
+label {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 14px;
+}
+
+input,
+textarea {
+  padding: 6px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-family: inherit;
+}
+
+button {
+  padding: 6px 12px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  background: #f0f0f0;
+  cursor: pointer;
+}
+
+button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}

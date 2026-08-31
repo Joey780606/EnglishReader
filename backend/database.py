@@ -1,0 +1,54 @@
+import sqlite3
+from pathlib import Path
+
+DATA_DIR = Path(__file__).resolve().parent.parent / "data"
+DATABASE_PATH = DATA_DIR / "app.db"
+
+SCHEMA = """
+CREATE TABLE IF NOT EXISTS documents (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    file_name TEXT NOT NULL,
+    content TEXT NOT NULL,
+    format TEXT NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS bookmarks (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    document_id INTEGER NOT NULL REFERENCES documents(id) ON DELETE CASCADE,
+    slot INTEGER NOT NULL CHECK(slot IN (1, 2, 3)),
+    page_number INTEGER NOT NULL,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE(document_id, slot)
+);
+
+CREATE TABLE IF NOT EXISTS vocabulary (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    english_word TEXT NOT NULL,
+    chinese_meanings TEXT NOT NULL,
+    part_of_speech TEXT,
+    example_sentence TEXT,
+    importance INTEGER NOT NULL DEFAULT 0,
+    view_count INTEGER NOT NULL DEFAULT 0,
+    source_document_id INTEGER REFERENCES documents(id) ON DELETE SET NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+"""
+
+
+def get_connection() -> sqlite3.Connection:
+    DATA_DIR.mkdir(parents=True, exist_ok=True)
+    connection = sqlite3.connect(DATABASE_PATH)
+    connection.execute("PRAGMA foreign_keys = ON")
+    connection.row_factory = sqlite3.Row
+    return connection
+
+
+def init_database() -> None:
+    connection = get_connection()
+    try:
+        connection.executescript(SCHEMA)
+        connection.commit()
+    finally:
+        connection.close()
