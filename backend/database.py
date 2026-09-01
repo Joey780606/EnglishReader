@@ -9,6 +9,7 @@ CREATE TABLE IF NOT EXISTS documents (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     file_name TEXT NOT NULL,
     content TEXT NOT NULL,
+    content_hash TEXT,
     format TEXT NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
@@ -49,6 +50,13 @@ def init_database() -> None:
     connection = get_connection()
     try:
         connection.executescript(SCHEMA)
+        _migrate_add_content_hash(connection)
         connection.commit()
     finally:
         connection.close()
+
+
+def _migrate_add_content_hash(connection: sqlite3.Connection) -> None:
+    columns = {row["name"] for row in connection.execute("PRAGMA table_info(documents)")}
+    if "content_hash" not in columns:
+        connection.execute("ALTER TABLE documents ADD COLUMN content_hash TEXT")

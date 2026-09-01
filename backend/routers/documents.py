@@ -1,3 +1,5 @@
+import hashlib
+
 from fastapi import APIRouter, File, HTTPException, UploadFile
 
 from backend.database import get_connection
@@ -15,15 +17,21 @@ async def upload_document(file: UploadFile = File(...)) -> DocumentSummary:
     except UnsupportedFormatError as error:
         raise HTTPException(status_code=400, detail=str(error)) from error
 
+    content_hash = hashlib.sha256(content.encode("utf-8")).hexdigest()
+
     connection = get_connection()
     try:
-        cursor = connection.execute(
-            "INSERT INTO documents (file_name, content, format) VALUES (?, ?, ?)",
-            (file.filename, content, document_format),
-        )
-        connection.commit()
-        document_id = cursor.lastrowid
-        row = connection.execute("SELECT * FROM documents WHERE id = ?", (document_id,)).fetchone()
+        row = connection.execute(
+            "SELECT * FROM documents WHERE content_hash = ?", (content_hash,)
+        ).fetchone()
+        if row is None:
+            cursor = connection.execute(
+                "INSERT INTO documents (file_name, content, content_hash, format) VALUES (?, ?, ?, ?)",
+                (file.filename, content, content_hash, document_format),
+            )
+            connection.commit()
+            document_id = cursor.lastrowid
+            row = connection.execute("SELECT * FROM documents WHERE id = ?", (document_id,)).fetchone()
     finally:
         connection.close()
 

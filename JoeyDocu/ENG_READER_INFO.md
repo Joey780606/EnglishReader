@@ -29,14 +29,20 @@ http://localhost:8000
 ## 方式二：分開啟動前後台（開發模式，適合邊改邊測）
 
 ### 1. 開後台（backend）
+**注意：一定要在專案根目錄（EnglishReader）執行，不要 `cd` 進 `backend` 資料夾**，
+因為 `backend/main.py` 內部是用 `from backend.xxx import ...` 這種絕對匯入寫法，
+必須從根目錄當工作目錄才能正確找到 `backend` 這個 module，否則會出現
+`ModuleNotFoundError: No module named 'backend'`。
+
 ```
-cd backend
-venv\Scripts\activate
-pip install -r requirements.txt
+cd C:\PCP\Git\Joey2026\EnglishReader
+backend\venv\Scripts\activate
+pip install -r backend\requirements.txt
 python -m uvicorn backend.main:app --reload --port 8000
 ```
 - 後台只提供 API，跑在 `http://localhost:8000`
 - `--reload` 會在程式碼變更時自動重啟，方便除錯
+- `pip install` 這行只有第一次建立 venv、或 `backend/requirements.txt` 有變更時才需要重跑，平常開後台可以省略
 
 ### 2. 開前台（frontend）
 另開一個終端機：
