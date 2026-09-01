@@ -11,6 +11,7 @@ interface DocumentViewerProps {
   onGoToPreviousPage: () => void;
   onGoToNextPage: () => void;
   onWordClick: (word: string) => void;
+  knownWords: Set<string>;
   bookmarks: BookmarkItem[];
   onSaveBookmark: (slot: number) => void;
   onJumpToBookmark: (slot: number) => void;
@@ -26,6 +27,7 @@ export function DocumentViewer({
   onGoToPreviousPage,
   onGoToNextPage,
   onWordClick,
+  knownWords,
   bookmarks,
   onSaveBookmark,
   onJumpToBookmark,
@@ -49,19 +51,22 @@ export function DocumentViewer({
       <BookmarkBar bookmarks={bookmarks} onSaveBookmark={onSaveBookmark} onJumpToBookmark={onJumpToBookmark} />
       <div className="document-content" style={{ fontSize: `${fontSize}px` }}>
         {page ? (
-          words.map((token, index) =>
-            /\s+/.test(token) ? (
-              <span key={index}>{token}</span>
-            ) : (
+          words.map((token, index) => {
+            if (/\s+/.test(token)) {
+              return <span key={index}>{token}</span>;
+            }
+            const cleanedWord = token.replace(/[^A-Za-z'-]/g, "");
+            const isKnown = knownWords.has(cleanedWord.toLowerCase());
+            return (
               <span
                 key={index}
-                className="clickable-word"
-                onClick={() => onWordClick(token.replace(/[^A-Za-z'-]/g, ""))}
+                className={isKnown ? "clickable-word known-word" : "clickable-word"}
+                onClick={() => onWordClick(cleanedWord)}
               >
                 {token}
               </span>
-            )
-          )
+            );
+          })
         ) : (
           <p className="placeholder-text">請先匯入文件</p>
         )}

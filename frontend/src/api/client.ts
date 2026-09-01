@@ -35,6 +35,19 @@ export interface VocabularyCreateRequest {
   source_document_id: number | null;
 }
 
+export interface VocabularyItem {
+  id: number;
+  english_word: string;
+  chinese_meanings: string[];
+  part_of_speech: string | null;
+  example_sentence: string | null;
+  importance: number;
+  view_count: number;
+  source_document_id: number | null;
+  created_at: string;
+  updated_at: string;
+}
+
 async function parseJsonOrThrow<T>(response: Response): Promise<T> {
   if (!response.ok) {
     const detail = await response.text();
@@ -94,4 +107,9 @@ export async function saveVocabularyItem(request: VocabularyCreateRequest): Prom
     body: JSON.stringify(request),
   });
   await parseJsonOrThrow<unknown>(response);
+}
+
+export async function listVocabularyItems(): Promise<VocabularyItem[]> {
+  const response = await fetch("/api/vocabulary");
+  return parseJsonOrThrow<VocabularyItem[]>(response);
 }

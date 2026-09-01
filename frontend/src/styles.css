@@ -125,6 +125,14 @@ body {
   background: #fff59d;
 }
 
+.known-word {
+  background: #c8f0c8;
+}
+
+.known-word:hover {
+  background: #fff59d;
+}
+
 .placeholder-text {
   color: #999;
 }

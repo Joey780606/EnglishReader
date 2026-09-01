@@ -5,6 +5,7 @@ import {
   DocumentSummary,
   getDocumentPage,
   listBookmarks,
+  listVocabularyItems,
   saveVocabularyItem,
   translateWord,
   uploadDocument,
@@ -29,11 +30,21 @@ export function ReaderPage() {
   const [isTranslating, setIsTranslating] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [knownWords, setKnownWords] = useState<Set<string>>(new Set());
+
+  async function refreshKnownWords() {
+    const items = await listVocabularyItems();
+    setKnownWords(new Set(items.map((item) => item.english_word.toLowerCase())));
+  }
 
   async function loadPage(documentId: number, pageNumber: number) {
     const page = await getDocumentPage(documentId, pageNumber);
     setCurrentPage(page);
   }
+
+  useEffect(() => {
+    refreshKnownWords();
+  }, []);
 
   async function handleFileSelected(event: React.ChangeEvent<HTMLInputElement>) {
     const file = event.target.files?.[0];
@@ -100,6 +111,7 @@ export function ReaderPage() {
       });
       setTranslationDraft(null);
       setSelectedWord("");
+      await refreshKnownWords();
     } catch (error) {
       setErrorMessage((error as Error).message);
     } finally {
@@ -145,6 +157,7 @@ export function ReaderPage() {
           onGoToPreviousPage={() => currentPage && changePage(currentPage.page_number - 1)}
           onGoToNextPage={() => currentPage && changePage(currentPage.page_number + 1)}
           onWordClick={handleWordClick}
+          knownWords={knownWords}
           bookmarks={bookmarks}
           onSaveBookmark={handleSaveBookmark}
           onJumpToBookmark={handleJumpToBookmark}
