@@ -4,6 +4,7 @@ export interface TranslationDraft {
   partOfSpeech: string;
   exampleSentence: string;
   importance: number;
+  savedVocabularyId?: number;
 }
 
 interface TranslationResultPanelProps {
@@ -23,9 +24,12 @@ export function TranslationResultPanel({ draft, onDraftChange, onSave, isSaving 
     );
   }
 
+  const isExistingRecord = draft.savedVocabularyId !== undefined;
+
   return (
     <div className="panel translation-result-panel">
       <div className="panel-title">翻譯結果</div>
+      {isExistingRecord && <p className="existing-record-note">此單字已收藏於單字本</p>}
       <label>
         英文
         <input type="text" value={draft.englishWord} readOnly />
@@ -62,9 +66,11 @@ export function TranslationResultPanel({ draft, onDraftChange, onSave, isSaving 
           onChange={(event) => onDraftChange({ ...draft, importance: Number(event.target.value) })}
         />
       </label>
-      <button onClick={onSave} disabled={isSaving}>
-        {isSaving ? "儲存中..." : "儲存"}
-      </button>
+      {!isExistingRecord && (
+        <button onClick={onSave} disabled={isSaving}>
+          {isSaving ? "儲存中..." : "儲存"}
+        </button>
+      )}
     </div>
   );
 }

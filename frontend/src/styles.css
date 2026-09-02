@@ -149,6 +149,15 @@ label {
   resize: vertical;
 }
 
+.existing-record-note {
+  background: #eef7ee;
+  border: 1px solid #c8f0c8;
+  border-radius: 4px;
+  padding: 6px 10px;
+  font-size: 13px;
+  color: #2e6b2e;
+}
+
 input,
 textarea {
   padding: 6px;

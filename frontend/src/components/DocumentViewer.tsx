@@ -11,7 +11,7 @@ interface DocumentViewerProps {
   onGoToPreviousPage: () => void;
   onGoToNextPage: () => void;
   onWordClick: (word: string) => void;
-  knownWords: Set<string>;
+  knownWords: ReadonlyMap<string, unknown>;
   bookmarks: BookmarkItem[];
   onSaveBookmark: (slot: number) => void;
   onJumpToBookmark: (slot: number) => void;

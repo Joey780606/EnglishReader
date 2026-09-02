@@ -3,6 +3,7 @@ import {
   BookmarkItem,
   DocumentPage,
   DocumentSummary,
+  VocabularyItem,
   getDocumentPage,
   listBookmarks,
   listVocabularyItems,
@@ -30,11 +31,11 @@ export function ReaderPage() {
   const [isTranslating, setIsTranslating] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
-  const [knownWords, setKnownWords] = useState<Set<string>>(new Set());
+  const [vocabularyByWord, setVocabularyByWord] = useState<Map<string, VocabularyItem>>(new Map());
 
   async function refreshKnownWords() {
     const items = await listVocabularyItems();
-    setKnownWords(new Set(items.map((item) => item.english_word.toLowerCase())));
+    setVocabularyByWord(new Map(items.map((item) => [item.english_word.toLowerCase(), item])));
   }
 
   async function loadPage(documentId: number, pageNumber: number) {
@@ -71,6 +72,18 @@ export function ReaderPage() {
   async function handleWordClick(word: string) {
     if (!word) return;
     setSelectedWord(word);
+    setErrorMessage(null);
+    const existing = vocabularyByWord.get(word.toLowerCase());
+    if (existing) {
+      setTranslationDraft({
+        englishWord: existing.english_word,
+        chineseMeaningsText: existing.chinese_meanings.join(", "),
+        partOfSpeech: existing.part_of_speech ?? "",
+        exampleSentence: existing.example_sentence ?? "",
+        importance: existing.importance,
+        savedVocabularyId: existing.id,
+      });
+    }
   }
 
   async function handleTranslate() {
@@ -85,6 +98,7 @@ export function ReaderPage() {
         partOfSpeech: result.part_of_speech ?? "",
         exampleSentence: result.example_sentence ?? "",
         importance: 0,
+        savedVocabularyId: undefined,
       });
     } catch (error) {
       setErrorMessage((error as Error).message);
@@ -157,7 +171,7 @@ export function ReaderPage() {
           onGoToPreviousPage={() => currentPage && changePage(currentPage.page_number - 1)}
           onGoToNextPage={() => currentPage && changePage(currentPage.page_number + 1)}
           onWordClick={handleWordClick}
-          knownWords={knownWords}
+          knownWords={vocabularyByWord}
           bookmarks={bookmarks}
           onSaveBookmark={handleSaveBookmark}
           onJumpToBookmark={handleJumpToBookmark}
