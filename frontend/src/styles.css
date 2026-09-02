@@ -144,6 +144,11 @@ label {
   font-size: 14px;
 }
 
+.example-sentence-textarea {
+  min-height: 100px;
+  resize: vertical;
+}
+
 input,
 textarea {
   padding: 6px;

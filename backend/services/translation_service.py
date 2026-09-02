@@ -31,10 +31,11 @@ class FreeDictionaryTranslationService(TranslationService):
         part_of_speech = None
         dictionary_example_sentence = None
         chinese_meanings: List[str] = []
+        lookup_word = word.lower()
 
         async with httpx.AsyncClient(timeout=10.0) as client:
             try:
-                dictionary_response = await client.get(DICTIONARY_API_URL.format(word=word))
+                dictionary_response = await client.get(DICTIONARY_API_URL.format(word=lookup_word))
                 if dictionary_response.status_code == 200:
                     entries = dictionary_response.json()
                     for entry in entries:

@@ -48,6 +48,8 @@ export function TranslationResultPanel({ draft, onDraftChange, onSave, isSaving 
       <label>
         英文例句
         <textarea
+          className="example-sentence-textarea"
+          rows={5}
           value={draft.exampleSentence}
           onChange={(event) => onDraftChange({ ...draft, exampleSentence: event.target.value })}
         />
