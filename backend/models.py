@@ -61,3 +61,24 @@ class VocabularyItem(BaseModel):
     source_document_id: Optional[int] = None
     created_at: str
     updated_at: str
+
+
+class VocabularyUpdateRequest(BaseModel):
+    english_word: str
+    chinese_meanings: List[str]
+    part_of_speech: Optional[str] = None
+    example_sentence: Optional[str] = None
+    importance: int = 0
+
+
+class VocabularyListResponse(BaseModel):
+    items: List[VocabularyItem]
+    total_count: int
+    page: int
+    page_size: int
+
+
+class VocabularyImportSummary(BaseModel):
+    imported: int
+    updated: int
+    skipped: int

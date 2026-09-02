@@ -48,6 +48,27 @@ export interface VocabularyItem {
   updated_at: string;
 }
 
+export interface VocabularyUpdateRequest {
+  english_word: string;
+  chinese_meanings: string[];
+  part_of_speech: string | null;
+  example_sentence: string | null;
+  importance: number;
+}
+
+export interface VocabularyListResponse {
+  items: VocabularyItem[];
+  total_count: number;
+  page: number;
+  page_size: number;
+}
+
+export interface VocabularyImportSummary {
+  imported: number;
+  updated: number;
+  skipped: number;
+}
+
 async function parseJsonOrThrow<T>(response: Response): Promise<T> {
   if (!response.ok) {
     const detail = await response.text();
@@ -110,6 +131,42 @@ export async function saveVocabularyItem(request: VocabularyCreateRequest): Prom
 }
 
 export async function listVocabularyItems(): Promise<VocabularyItem[]> {
-  const response = await fetch("/api/vocabulary");
+  const response = await fetch("/api/vocabulary/all");
   return parseJsonOrThrow<VocabularyItem[]>(response);
+}
+
+export async function listVocabularyItemsPaged(
+  page: number,
+  pageSize: number
+): Promise<VocabularyListResponse> {
+  const response = await fetch(`/api/vocabulary?page=${page}&page_size=${pageSize}`);
+  return parseJsonOrThrow<VocabularyListResponse>(response);
+}
+
+export async function registerVocabularyView(id: number): Promise<VocabularyItem> {
+  const response = await fetch(`/api/vocabulary/${id}/view`, { method: "POST" });
+  return parseJsonOrThrow<VocabularyItem>(response);
+}
+
+export async function updateVocabularyItem(
+  id: number,
+  request: VocabularyUpdateRequest
+): Promise<VocabularyItem> {
+  const response = await fetch(`/api/vocabulary/${id}`, {
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(request),
+  });
+  return parseJsonOrThrow<VocabularyItem>(response);
+}
+
+export function getVocabularyExportUrl(): string {
+  return "/api/vocabulary/export";
+}
+
+export async function importVocabulary(file: File): Promise<VocabularyImportSummary> {
+  const formData = new FormData();
+  formData.append("file", file);
+  const response = await fetch("/api/vocabulary/import", { method: "POST", body: formData });
+  return parseJsonOrThrow<VocabularyImportSummary>(response);
 }

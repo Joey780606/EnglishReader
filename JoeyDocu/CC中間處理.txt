@@ -1,0 +1,28 @@
+   │ cd "C:\PCP\Git\Joey2026\EnglishReader\frontend" && npx tsc --noEmit 2>&1 | head -100
+   對前端程式碼執行 TypeScript 型別檢查
+= = =
+   │ cd "C:\PCP\Git\Joey2026\EnglishReader" && backend/venv/Scripts/python -c "from backend.main import app;
+   │ print('OK', [r.path for r in app.routes if hasattr(r,'path')])" 2>&1 | tail -40
+= = =
+   cd "C:\PCP\Git\Joey2026\EnglishReader\frontend" && npm run build 2>&1 | tail -60
+   建置前端專案確認無編譯錯誤
+= = =
+   │ cd "C:\PCP\Git\Joey2026\EnglishReader" && rm -f data/app.db.uitest 2>/dev/null; backend/venv/Scripts/python -m
+   │ uvicorn backend.main:app --port 8010 > /tmp_uvicorn_log_disabled 2>&1 &
+   │ sleep 2
+   │ curl -s -o /dev/null -w "%{http_code}\n" http://127.0.0.1:8010/
+   │ curl -s http://127.0.0.1:8010/api/vocabulary | head -c 300
+   │ echo
+   啟動後端伺服器並確認可正常回應
+= = =
+   │ cd "C:\PCP\Git\Joey2026\EnglishReader" && LOG="C:\Users\pcpJoey\AppData\Local\Temp\claude\C--PCP-Git-Joey2026-En
+   │ glishReader\8e34bfe3-9faf-4ae3-8b0a-df1de622669e\scratchpad\uvicorn2.log" && nohup backend/venv/Scripts/python
+   │ -m uvicorn backend.main:app --port 8010 > "$LOG" 2>&1 & disown; sleep 2; curl -s -o /dev/null -w
+   │ "%{http_code}\n" http://127.0.0.1:8010/api/vocabulary
+   以背景常駐方式啟動後端伺服器
+= = =
+   curl -s -o /dev/null -w "%{http_code}\n" http://127.0.0.1:8000/api/vocabulary
+   確認 8000 埠後端是否已回應
+=
+   taskkill //F //IM python.exe //T 2>&1 | tail -5
+   終止先前殘留的 python 後端行程

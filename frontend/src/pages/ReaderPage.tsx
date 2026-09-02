@@ -14,7 +14,6 @@ import {
 } from "../api/client";
 import { DocumentViewer } from "../components/DocumentViewer";
 import { SelectedWordPanel } from "../components/SelectedWordPanel";
-import { TopTabs } from "../components/TopTabs";
 import { TranslationDraft, TranslationResultPanel } from "../components/TranslationResultPanel";
 
 const DEFAULT_FONT_SIZE = 18;
@@ -151,7 +150,6 @@ export function ReaderPage() {
 
   return (
     <div className="reader-page">
-      <TopTabs />
       <div className="upload-bar">
         <label className="upload-button">
           選擇文件

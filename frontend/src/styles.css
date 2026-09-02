@@ -8,10 +8,18 @@ body {
   background: #f5f5f5;
 }
 
-.reader-page {
+.app-shell {
   display: flex;
   flex-direction: column;
   height: 100vh;
+}
+
+.reader-page,
+.vocabulary-list-page {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
 }
 
 .top-tabs {
@@ -177,4 +185,76 @@ button {
 button:disabled {
   opacity: 0.5;
   cursor: not-allowed;
+}
+
+.export-link {
+  color: #2c3e50;
+  text-decoration: none;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  padding: 6px 12px;
+}
+
+.export-link:hover {
+  background: #f0f0f0;
+}
+
+.vocabulary-table-panel {
+  flex: 1;
+  margin: 12px 16px;
+  overflow: auto;
+}
+
+.vocabulary-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.vocabulary-table th,
+.vocabulary-table td {
+  text-align: left;
+  padding: 8px;
+  border-bottom: 1px solid #eee;
+}
+
+.vocabulary-row {
+  cursor: pointer;
+}
+
+.vocabulary-row:hover {
+  background: #fafce0;
+}
+
+.pagination-bar {
+  justify-content: center;
+  margin-top: 12px;
+}
+
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+}
+
+.modal-card {
+  background: white;
+  border-radius: 6px;
+  padding: 16px;
+  width: 480px;
+  max-width: 90vw;
+  max-height: 85vh;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 }
