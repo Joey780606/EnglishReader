@@ -9,6 +9,7 @@ class DocumentSummary(BaseModel):
     format: str
     created_at: str
     total_pages: int
+    last_read_page: int
 
 
 class DocumentPage(BaseModel):

@@ -4,6 +4,7 @@ export interface DocumentSummary {
   format: string;
   created_at: string;
   total_pages: number;
+  last_read_page: number;
 }
 
 export interface DocumentPage {

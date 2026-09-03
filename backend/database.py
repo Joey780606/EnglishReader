@@ -11,6 +11,7 @@ CREATE TABLE IF NOT EXISTS documents (
     content TEXT NOT NULL,
     content_hash TEXT,
     format TEXT NOT NULL,
+    last_read_page INTEGER NOT NULL DEFAULT 1,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
@@ -51,6 +52,7 @@ def init_database() -> None:
     try:
         connection.executescript(SCHEMA)
         _migrate_add_content_hash(connection)
+        _migrate_add_last_read_page(connection)
         connection.commit()
     finally:
         connection.close()
@@ -60,3 +62,9 @@ def _migrate_add_content_hash(connection: sqlite3.Connection) -> None:
     columns = {row["name"] for row in connection.execute("PRAGMA table_info(documents)")}
     if "content_hash" not in columns:
         connection.execute("ALTER TABLE documents ADD COLUMN content_hash TEXT")
+
+
+def _migrate_add_last_read_page(connection: sqlite3.Connection) -> None:
+    columns = {row["name"] for row in connection.execute("PRAGMA table_info(documents)")}
+    if "last_read_page" not in columns:
+        connection.execute("ALTER TABLE documents ADD COLUMN last_read_page INTEGER NOT NULL DEFAULT 1")

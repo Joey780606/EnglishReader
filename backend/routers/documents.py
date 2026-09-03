@@ -42,6 +42,7 @@ async def upload_document(file: UploadFile = File(...)) -> DocumentSummary:
         format=row["format"],
         created_at=row["created_at"],
         total_pages=total_pages,
+        last_read_page=row["last_read_page"],
     )
 
 
@@ -60,6 +61,7 @@ async def list_documents() -> list[DocumentSummary]:
             format=row["format"],
             created_at=row["created_at"],
             total_pages=len(split_into_pages(row["content"])),
+            last_read_page=row["last_read_page"],
         )
         for row in rows
     ]
@@ -77,9 +79,20 @@ async def get_document_page(document_id: int, page_number: int) -> DocumentPage:
         raise HTTPException(status_code=404, detail="Document not found")
 
     page_content, total_pages = get_page_content(row["content"], page_number)
+    clamped_page_number = max(1, min(page_number, total_pages))
+
+    connection = get_connection()
+    try:
+        connection.execute(
+            "UPDATE documents SET last_read_page = ? WHERE id = ?", (clamped_page_number, document_id)
+        )
+        connection.commit()
+    finally:
+        connection.close()
+
     return DocumentPage(
         document_id=document_id,
-        page_number=max(1, min(page_number, total_pages)),
+        page_number=clamped_page_number,
         total_pages=total_pages,
         content=page_content,
     )

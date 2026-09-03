@@ -54,7 +54,7 @@ export function ReaderPage() {
       const document = await uploadDocument(file);
       setCurrentDocument(document);
       setBookmarks(await listBookmarks(document.id));
-      await loadPage(document.id, 1);
+      await loadPage(document.id, document.last_read_page || 1);
     } catch (error) {
       setErrorMessage((error as Error).message);
     } finally {
