@@ -68,11 +68,10 @@ export function ReaderPage() {
     await loadPage(currentDocument.id, clamped);
   }
 
-  async function handleWordClick(word: string) {
-    if (!word) return;
+  function handleSelectedWordChange(word: string) {
     setSelectedWord(word);
     setErrorMessage(null);
-    const existing = vocabularyByWord.get(word.toLowerCase());
+    const existing = vocabularyByWord.get(word.trim().toLowerCase());
     if (existing) {
       setTranslationDraft({
         englishWord: existing.english_word,
@@ -85,12 +84,30 @@ export function ReaderPage() {
     }
   }
 
+  async function handleWordClick(word: string) {
+    if (!word) return;
+    handleSelectedWordChange(word);
+  }
+
   async function handleTranslate() {
-    if (!selectedWord.trim()) return;
-    setIsTranslating(true);
+    const word = selectedWord.trim();
+    if (!word) return;
     setErrorMessage(null);
+    const existing = vocabularyByWord.get(word.toLowerCase());
+    if (existing) {
+      setTranslationDraft({
+        englishWord: existing.english_word,
+        chineseMeaningsText: existing.chinese_meanings.join(", "),
+        partOfSpeech: existing.part_of_speech ?? "",
+        exampleSentence: existing.example_sentence ?? "",
+        importance: existing.importance,
+        savedVocabularyId: existing.id,
+      });
+      return;
+    }
+    setIsTranslating(true);
     try {
-      const result = await translateWord(selectedWord.trim(), currentDocument?.id ?? null);
+      const result = await translateWord(word, currentDocument?.id ?? null);
       setTranslationDraft({
         englishWord: result.english_word,
         chineseMeaningsText: result.chinese_meanings.join(", "),
@@ -176,7 +193,7 @@ export function ReaderPage() {
         />
         <SelectedWordPanel
           selectedWord={selectedWord}
-          onSelectedWordChange={setSelectedWord}
+          onSelectedWordChange={handleSelectedWordChange}
           onTranslate={handleTranslate}
           isTranslating={isTranslating}
         />
