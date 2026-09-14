@@ -118,6 +118,11 @@ body {
   gap: 4px;
 }
 
+.paste-text-input {
+  resize: vertical;
+  min-height: 80px;
+}
+
 .document-content {
   flex: 1;
   overflow-y: auto;

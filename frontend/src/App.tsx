@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { TabKey, TopTabs } from "./components/TopTabs";
+import { AdHocTextPage } from "./pages/AdHocTextPage";
 import { ReaderPage } from "./pages/ReaderPage";
 import { VocabularyListPage } from "./pages/VocabularyListPage";
 
@@ -14,6 +15,9 @@ export function App() {
       </div>
       <div style={{ display: activeTab === "vocabulary" ? "contents" : "none" }}>
         <VocabularyListPage active={activeTab === "vocabulary"} />
+      </div>
+      <div style={{ display: activeTab === "adhoc" ? "contents" : "none" }}>
+        <AdHocTextPage />
       </div>
     </div>
   );
