@@ -1,4 +1,4 @@
-export type TabKey = "reader" | "vocabulary" | "adhoc";
+export type TabKey = "reader" | "vocabulary" | "adhoc" | "en2zh";
 
 interface TopTabsProps {
   activeTab: TabKey;
@@ -9,6 +9,7 @@ const TABS: { key: TabKey; label: string }[] = [
   { key: "reader", label: "閱讀器" },
   { key: "vocabulary", label: "單字列表" },
   { key: "adhoc", label: "隨選文字" },
+  { key: "en2zh", label: "英翻中" },
 ];
 
 export function TopTabs({ activeTab, onTabChange }: TopTabsProps) {
