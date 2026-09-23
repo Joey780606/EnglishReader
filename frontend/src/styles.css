@@ -120,7 +120,7 @@ body {
 
 .paste-text-input {
   resize: vertical;
-  min-height: 80px;
+  min-height: 240px;
 }
 
 .document-content {

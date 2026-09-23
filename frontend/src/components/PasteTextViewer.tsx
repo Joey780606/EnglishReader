@@ -28,7 +28,7 @@ export function PasteTextViewer({
       <div className="panel-title">隨選文字</div>
       <textarea
         className="paste-text-input"
-        rows={4}
+        rows={12}
         placeholder="請將要閱讀的文字貼在這裡"
         value={draftText}
         onChange={(event) => setDraftText(event.target.value)}
