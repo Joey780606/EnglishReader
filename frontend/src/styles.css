@@ -263,3 +263,31 @@ button:disabled {
   align-items: center;
   justify-content: space-between;
 }
+
+.pending-words-panel {
+  flex: 1;
+}
+
+.pending-words-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  overflow-y: auto;
+}
+
+.pending-word-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 0;
+  border-bottom: 1px solid #eee;
+}
+
+.pending-word-phrase {
+  flex: 1;
+  cursor: pointer;
+}
+
+.pending-word-phrase:hover {
+  background: #fff59d;
+}

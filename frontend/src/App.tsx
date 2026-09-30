@@ -2,6 +2,7 @@ import { useState } from "react";
 import { TabKey, TopTabs } from "./components/TopTabs";
 import { AdHocTextPage } from "./pages/AdHocTextPage";
 import { EnglishToChinesePage } from "./pages/EnglishToChinesePage";
+import { PreRecordedWordsPage } from "./pages/PreRecordedWordsPage";
 import { ReaderPage } from "./pages/ReaderPage";
 import { VocabularyListPage } from "./pages/VocabularyListPage";
 
@@ -22,6 +23,9 @@ export function App() {
       </div>
       <div style={{ display: activeTab === "en2zh" ? "contents" : "none" }}>
         <EnglishToChinesePage />
+      </div>
+      <div style={{ display: activeTab === "prewords" ? "contents" : "none" }}>
+        <PreRecordedWordsPage active={activeTab === "prewords"} />
       </div>
     </div>
   );

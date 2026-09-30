@@ -83,3 +83,23 @@ class VocabularyImportSummary(BaseModel):
     imported: int
     updated: int
     skipped: int
+
+
+class PendingWordItem(BaseModel):
+    id: int
+    phrase: str
+    created_at: str
+
+
+class PendingWordCreateRequest(BaseModel):
+    text: str
+
+
+class PendingWordUpdateRequest(BaseModel):
+    phrase: str
+
+
+class PendingWordCreateSummary(BaseModel):
+    added: int
+    skipped: int
+    items: List[PendingWordItem]

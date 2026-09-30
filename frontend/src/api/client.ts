@@ -70,6 +70,18 @@ export interface VocabularyImportSummary {
   skipped: number;
 }
 
+export interface PendingWordItem {
+  id: number;
+  phrase: string;
+  created_at: string;
+}
+
+export interface PendingWordCreateSummary {
+  added: number;
+  skipped: number;
+  items: PendingWordItem[];
+}
+
 async function parseJsonOrThrow<T>(response: Response): Promise<T> {
   if (!response.ok) {
     const detail = await response.text();
@@ -170,4 +182,35 @@ export async function importVocabulary(file: File): Promise<VocabularyImportSumm
   formData.append("file", file);
   const response = await fetch("/api/vocabulary/import", { method: "POST", body: formData });
   return parseJsonOrThrow<VocabularyImportSummary>(response);
+}
+
+export async function listPendingWords(): Promise<PendingWordItem[]> {
+  const response = await fetch("/api/pending-words");
+  return parseJsonOrThrow<PendingWordItem[]>(response);
+}
+
+export async function createPendingWords(text: string): Promise<PendingWordCreateSummary> {
+  const response = await fetch("/api/pending-words", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ text }),
+  });
+  return parseJsonOrThrow<PendingWordCreateSummary>(response);
+}
+
+export async function updatePendingWord(id: number, phrase: string): Promise<PendingWordItem> {
+  const response = await fetch(`/api/pending-words/${id}`, {
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ phrase }),
+  });
+  return parseJsonOrThrow<PendingWordItem>(response);
+}
+
+export async function deletePendingWord(id: number): Promise<void> {
+  const response = await fetch(`/api/pending-words/${id}`, { method: "DELETE" });
+  if (!response.ok && response.status !== 204) {
+    const detail = await response.text();
+    throw new Error(`Request failed (${response.status}): ${detail}`);
+  }
 }
