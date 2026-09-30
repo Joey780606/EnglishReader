@@ -131,7 +131,7 @@ export function ReaderPage() {
       await saveVocabularyItem({
         english_word: translationDraft.englishWord,
         chinese_meanings: translationDraft.chineseMeaningsText
-          .split(",")
+          .split(/[,;，；]/)
           .map((meaning) => meaning.trim())
           .filter(Boolean),
         part_of_speech: translationDraft.partOfSpeech || null,

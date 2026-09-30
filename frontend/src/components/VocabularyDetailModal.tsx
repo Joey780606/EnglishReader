@@ -32,7 +32,7 @@ export function VocabularyDetailModal({ item, onClose, onSaved }: VocabularyDeta
       const updated = await updateVocabularyItem(item.id, {
         english_word: item.english_word,
         chinese_meanings: chineseMeaningsText
-          .split(",")
+          .split(/[,;，；]/)
           .map((meaning) => meaning.trim())
           .filter(Boolean),
         part_of_speech: partOfSpeech || null,
@@ -61,7 +61,7 @@ export function VocabularyDetailModal({ item, onClose, onSaved }: VocabularyDeta
           <input type="text" value={item.english_word} readOnly />
         </label>
         <label>
-          中文（可放多個意思，以逗號分隔）
+          中文（可放多個意思，以逗號或分號分隔）
           <textarea value={chineseMeaningsText} onChange={(event) => setChineseMeaningsText(event.target.value)} />
         </label>
         <label>

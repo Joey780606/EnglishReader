@@ -35,7 +35,7 @@ export function TranslationResultPanel({ draft, onDraftChange, onSave, isSaving 
         <input type="text" value={draft.englishWord} readOnly />
       </label>
       <label>
-        中文（可放多個意思，以逗號分隔）
+        中文（可放多個意思，以逗號或分號分隔）
         <textarea
           value={draft.chineseMeaningsText}
           onChange={(event) => onDraftChange({ ...draft, chineseMeaningsText: event.target.value })}
