@@ -7,6 +7,18 @@ export interface TranslationDraft {
   savedVocabularyId?: number;
 }
 
+/** 查無翻譯或翻譯失敗時，提供空白草稿讓使用者手動輸入後儲存 */
+export function createEmptyDraft(word: string): TranslationDraft {
+  return {
+    englishWord: word,
+    chineseMeaningsText: "",
+    partOfSpeech: "",
+    exampleSentence: "",
+    importance: 0,
+    savedVocabularyId: undefined,
+  };
+}
+
 interface TranslationResultPanelProps {
   draft: TranslationDraft | null;
   onDraftChange: (draft: TranslationDraft) => void;

@@ -6,7 +6,7 @@ import {
   translateWord,
 } from "../api/client";
 import { SelectedWordPanel } from "../components/SelectedWordPanel";
-import { TranslationDraft, TranslationResultPanel } from "../components/TranslationResultPanel";
+import { TranslationDraft, TranslationResultPanel, createEmptyDraft } from "../components/TranslationResultPanel";
 
 export function EnglishToChinesePage() {
   const [selectedWord, setSelectedWord] = useState("");
@@ -71,6 +71,7 @@ export function EnglishToChinesePage() {
       });
     } catch (error) {
       setErrorMessage((error as Error).message);
+      setTranslationDraft(createEmptyDraft(word));
     } finally {
       setIsTranslating(false);
     }

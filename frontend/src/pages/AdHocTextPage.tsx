@@ -7,7 +7,7 @@ import {
 } from "../api/client";
 import { PasteTextViewer } from "../components/PasteTextViewer";
 import { SelectedWordPanel } from "../components/SelectedWordPanel";
-import { TranslationDraft, TranslationResultPanel } from "../components/TranslationResultPanel";
+import { TranslationDraft, TranslationResultPanel, createEmptyDraft } from "../components/TranslationResultPanel";
 
 const DEFAULT_FONT_SIZE = 18;
 const MIN_FONT_SIZE = 12;
@@ -82,6 +82,7 @@ export function AdHocTextPage() {
       });
     } catch (error) {
       setErrorMessage((error as Error).message);
+      setTranslationDraft(createEmptyDraft(word));
     } finally {
       setIsTranslating(false);
     }

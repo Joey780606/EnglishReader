@@ -12,7 +12,7 @@ import {
 } from "../api/client";
 import { PendingWordsPanel } from "../components/PendingWordsPanel";
 import { SelectedWordPanel } from "../components/SelectedWordPanel";
-import { TranslationDraft, TranslationResultPanel } from "../components/TranslationResultPanel";
+import { TranslationDraft, TranslationResultPanel, createEmptyDraft } from "../components/TranslationResultPanel";
 
 interface PreRecordedWordsPageProps {
   active: boolean;
@@ -136,6 +136,7 @@ export function PreRecordedWordsPage({ active }: PreRecordedWordsPageProps) {
       });
     } catch (error) {
       setErrorMessage((error as Error).message);
+      setTranslationDraft(createEmptyDraft(word));
     } finally {
       setIsTranslating(false);
     }

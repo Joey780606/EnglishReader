@@ -71,7 +71,7 @@ class FreeDictionaryTranslationService(TranslationService):
                 pass
 
         return WordLookupResult(
-            chinese_meanings=chinese_meanings or ["（查無翻譯）"],
+            chinese_meanings=chinese_meanings,
             part_of_speech=part_of_speech,
             dictionary_example_sentence=dictionary_example_sentence,
         )
