@@ -103,3 +103,14 @@ class PendingWordCreateSummary(BaseModel):
     added: int
     skipped: int
     items: List[PendingWordItem]
+
+
+class QuizQuestion(BaseModel):
+    vocabulary_id: int
+    english_word: str
+    options: List[str]
+    correct_index: int
+
+
+class QuizResponse(BaseModel):
+    questions: List[QuizQuestion]

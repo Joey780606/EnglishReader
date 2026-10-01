@@ -214,3 +214,16 @@ export async function deletePendingWord(id: number): Promise<void> {
     throw new Error(`Request failed (${response.status}): ${detail}`);
   }
 }
+
+export interface QuizQuestion {
+  vocabulary_id: number;
+  english_word: string;
+  options: string[];
+  correct_index: number;
+}
+
+export async function fetchQuiz(count = 10): Promise<QuizQuestion[]> {
+  const response = await fetch(`/api/quiz?count=${count}`);
+  const data = await parseJsonOrThrow<{ questions: QuizQuestion[] }>(response);
+  return data.questions;
+}
