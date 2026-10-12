@@ -220,6 +220,9 @@ export interface QuizQuestion {
   english_word: string;
   options: string[];
   correct_index: number;
+  part_of_speech: string | null;
+  chinese_meanings: string[];
+  example_sentence: string | null;
 }
 
 export async function fetchQuiz(count = 10): Promise<QuizQuestion[]> {

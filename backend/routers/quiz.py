@@ -26,7 +26,8 @@ async def generate_quiz(count: int = Query(10, ge=1, le=50)) -> QuizResponse:
     connection = get_connection()
     try:
         rows = connection.execute(
-            "SELECT id, english_word, chinese_meanings FROM vocabulary ORDER BY view_count ASC, RANDOM()"
+            "SELECT id, english_word, chinese_meanings, part_of_speech, example_sentence "
+            "FROM vocabulary ORDER BY view_count ASC, RANDOM()"
         ).fetchall()
     finally:
         connection.close()
@@ -35,7 +36,7 @@ async def generate_quiz(count: int = Query(10, ge=1, le=50)) -> QuizResponse:
     for row in rows:
         meanings = _usable_meanings(row["chinese_meanings"])
         if meanings:
-            candidates.append((row["id"], row["english_word"], meanings))
+            candidates.append((row["id"], row["english_word"], meanings, row["part_of_speech"], row["example_sentence"]))
 
     if len(candidates) < OPTION_COUNT:
         raise HTTPException(
@@ -44,18 +45,18 @@ async def generate_quiz(count: int = Query(10, ge=1, le=50)) -> QuizResponse:
         )
 
     questions: list[QuizQuestion] = []
-    for vocabulary_id, english_word, meanings in candidates[:count]:
+    for vocabulary_id, english_word, meanings, part_of_speech, example_sentence in candidates[:count]:
         correct = random.choice(meanings)
         excluded = set(meanings)
         distractor_pool = {
             random.choice(other_meanings)
-            for other_id, _, other_meanings in candidates
+            for other_id, _, other_meanings, *_ in candidates
             if other_id != vocabulary_id
         } - excluded
         if len(distractor_pool) < OPTION_COUNT - 1:
             distractor_pool = {
                 meaning
-                for other_id, _, other_meanings in candidates
+                for other_id, _, other_meanings, *_ in candidates
                 if other_id != vocabulary_id
                 for meaning in other_meanings
             } - excluded
@@ -70,6 +71,9 @@ async def generate_quiz(count: int = Query(10, ge=1, le=50)) -> QuizResponse:
                 english_word=english_word,
                 options=options,
                 correct_index=options.index(correct),
+                part_of_speech=part_of_speech,
+                chinese_meanings=meanings,
+                example_sentence=example_sentence,
             )
         )
 

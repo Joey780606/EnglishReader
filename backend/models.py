@@ -110,6 +110,10 @@ class QuizQuestion(BaseModel):
     english_word: str
     options: List[str]
     correct_index: int
+    # Full vocabulary details, shown after the question is answered.
+    part_of_speech: Optional[str] = None
+    chinese_meanings: List[str]
+    example_sentence: Optional[str] = None
 
 
 class QuizResponse(BaseModel):

@@ -107,6 +107,20 @@ export function QuizPage() {
             </button>
           </div>
           {hasAnswered && (
+            <div className="quiz-answer-detail">
+              <div>
+                <span className="quiz-answer-word">{currentQuestion.english_word}</span>
+                {currentQuestion.part_of_speech && (
+                  <span className="quiz-answer-pos">{currentQuestion.part_of_speech}</span>
+                )}
+              </div>
+              <div>{currentQuestion.chinese_meanings.join(", ")}</div>
+              {currentQuestion.example_sentence && (
+                <div className="quiz-answer-example">{currentQuestion.example_sentence}</div>
+              )}
+            </div>
+          )}
+          {hasAnswered && (
             <button onClick={handleNext}>{isLastQuestion ? "查看成績" : "下一題"}</button>
           )}
         </div>
