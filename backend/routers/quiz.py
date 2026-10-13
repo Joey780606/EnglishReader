@@ -1,10 +1,11 @@
 import json
 import random
+from typing import Iterable
 
 from fastapi import APIRouter, HTTPException, Query
 
 from backend.database import get_connection
-from backend.models import QuizQuestion, QuizResponse
+from backend.models import QuizQuestion, QuizResponse, QuizWordDetail
 
 router = APIRouter(prefix="/api/quiz", tags=["quiz"])
 
@@ -14,6 +15,17 @@ OPTION_COUNT = 4
 def _usable_meanings(raw_meanings: str) -> list[str]:
     meanings = [meaning.strip() for meaning in json.loads(raw_meanings)]
     return [meaning for meaning in meanings if meaning]
+
+
+def _distractor_pool(
+    meaning_sources: Iterable[tuple[str, QuizWordDetail]], excluded_meanings: list[str]
+) -> dict[str, QuizWordDetail]:
+    """Map each distractor meaning to the word it came from, skipping the correct word's meanings."""
+    pool: dict[str, QuizWordDetail] = {}
+    for meaning, source in meaning_sources:
+        if meaning not in excluded_meanings:
+            pool.setdefault(meaning, source)
+    return pool
 
 
 @router.get("", response_model=QuizResponse)
@@ -32,11 +44,19 @@ async def generate_quiz(count: int = Query(10, ge=1, le=50)) -> QuizResponse:
     finally:
         connection.close()
 
-    candidates = []
+    candidates: list[QuizWordDetail] = []
     for row in rows:
         meanings = _usable_meanings(row["chinese_meanings"])
         if meanings:
-            candidates.append((row["id"], row["english_word"], meanings, row["part_of_speech"], row["example_sentence"]))
+            candidates.append(
+                QuizWordDetail(
+                    vocabulary_id=row["id"],
+                    english_word=row["english_word"],
+                    part_of_speech=row["part_of_speech"],
+                    chinese_meanings=meanings,
+                    example_sentence=row["example_sentence"],
+                )
+            )
 
     if len(candidates) < OPTION_COUNT:
         raise HTTPException(
@@ -45,21 +65,17 @@ async def generate_quiz(count: int = Query(10, ge=1, le=50)) -> QuizResponse:
         )
 
     questions: list[QuizQuestion] = []
-    for vocabulary_id, english_word, meanings, part_of_speech, example_sentence in candidates[:count]:
-        correct = random.choice(meanings)
-        excluded = set(meanings)
-        distractor_pool = {
-            random.choice(other_meanings)
-            for other_id, _, other_meanings, *_ in candidates
-            if other_id != vocabulary_id
-        } - excluded
+    for word in candidates[:count]:
+        correct = random.choice(word.chinese_meanings)
+        others = [other for other in candidates if other.vocabulary_id != word.vocabulary_id]
+        distractor_pool = _distractor_pool(
+            ((random.choice(other.chinese_meanings), other) for other in others), word.chinese_meanings
+        )
         if len(distractor_pool) < OPTION_COUNT - 1:
-            distractor_pool = {
-                meaning
-                for other_id, _, other_meanings, *_ in candidates
-                if other_id != vocabulary_id
-                for meaning in other_meanings
-            } - excluded
+            distractor_pool = _distractor_pool(
+                ((meaning, other) for other in others for meaning in other.chinese_meanings),
+                word.chinese_meanings,
+            )
         if len(distractor_pool) < OPTION_COUNT - 1:
             continue
 
@@ -67,13 +83,11 @@ async def generate_quiz(count: int = Query(10, ge=1, le=50)) -> QuizResponse:
         random.shuffle(options)
         questions.append(
             QuizQuestion(
-                vocabulary_id=vocabulary_id,
-                english_word=english_word,
+                vocabulary_id=word.vocabulary_id,
+                english_word=word.english_word,
                 options=options,
                 correct_index=options.index(correct),
-                part_of_speech=part_of_speech,
-                chinese_meanings=meanings,
-                example_sentence=example_sentence,
+                option_details=[word if option == correct else distractor_pool[option] for option in options],
             )
         )
 

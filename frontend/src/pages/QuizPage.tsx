@@ -12,6 +12,8 @@ export function QuizPage() {
   const [questions, setQuestions] = useState<QuizQuestion[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
+  // After answering, the option whose source word is shown in the detail box.
+  const [viewedIndex, setViewedIndex] = useState<number | null>(null);
   const [correctCount, setCorrectCount] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
@@ -19,6 +21,8 @@ export function QuizPage() {
   const currentQuestion = questions[currentIndex];
   const hasAnswered = selectedIndex !== null;
   const isLastQuestion = currentIndex === questions.length - 1;
+  const viewedDetail =
+    currentQuestion && viewedIndex !== null ? currentQuestion.option_details[viewedIndex] : null;
 
   async function handleStart() {
     setIsLoading(true);
@@ -28,6 +32,7 @@ export function QuizPage() {
       setQuestions(generated);
       setCurrentIndex(0);
       setSelectedIndex(null);
+      setViewedIndex(null);
       setCorrectCount(0);
       setStatus("playing");
     } catch (error) {
@@ -38,8 +43,15 @@ export function QuizPage() {
   }
 
   async function handleAnswer(optionIndex: number) {
-    if (hasAnswered || !currentQuestion) return;
+    if (!currentQuestion) return;
+    const dontKnowIndex = currentQuestion.options.length;
+    // Once answered, clicking options only browses their words; the score is not affected.
+    if (hasAnswered) {
+      setViewedIndex(optionIndex === dontKnowIndex ? currentQuestion.correct_index : optionIndex);
+      return;
+    }
     setSelectedIndex(optionIndex);
+    setViewedIndex(optionIndex === dontKnowIndex ? currentQuestion.correct_index : optionIndex);
     if (optionIndex === currentQuestion.correct_index) {
       setCorrectCount((count) => count + 1);
     }
@@ -57,14 +69,16 @@ export function QuizPage() {
     }
     setCurrentIndex((index) => index + 1);
     setSelectedIndex(null);
+    setViewedIndex(null);
   }
 
   // "我不知道" is always the last choice (index === options.length) and counts as a wrong answer.
   function optionClassName(optionIndex: number): string {
     if (!hasAnswered || !currentQuestion) return "quiz-option";
-    if (optionIndex === currentQuestion.correct_index) return "quiz-option quiz-option-correct";
-    if (optionIndex === selectedIndex) return "quiz-option quiz-option-wrong";
-    return "quiz-option";
+    const viewingClass = optionIndex === viewedIndex ? " quiz-option-viewing" : "";
+    if (optionIndex === currentQuestion.correct_index) return `quiz-option quiz-option-correct${viewingClass}`;
+    if (optionIndex === selectedIndex) return `quiz-option quiz-option-wrong${viewingClass}`;
+    return `quiz-option${viewingClass}`;
   }
 
   return (
@@ -93,7 +107,6 @@ export function QuizPage() {
                 key={optionIndex}
                 className={optionClassName(optionIndex)}
                 onClick={() => handleAnswer(optionIndex)}
-                disabled={hasAnswered}
               >
                 {option}
               </button>
@@ -106,18 +119,19 @@ export function QuizPage() {
               {DONT_KNOW_LABEL}
             </button>
           </div>
-          {hasAnswered && (
+          {viewedDetail && (
             <div className="quiz-answer-detail">
               <div>
-                <span className="quiz-answer-word">{currentQuestion.english_word}</span>
-                {currentQuestion.part_of_speech && (
-                  <span className="quiz-answer-pos">{currentQuestion.part_of_speech}</span>
+                <span className="quiz-answer-word">{viewedDetail.english_word}</span>
+                {viewedDetail.part_of_speech && (
+                  <span className="quiz-answer-pos">{viewedDetail.part_of_speech}</span>
                 )}
               </div>
-              <div>{currentQuestion.chinese_meanings.join(", ")}</div>
-              {currentQuestion.example_sentence && (
-                <div className="quiz-answer-example">{currentQuestion.example_sentence}</div>
+              <div>{viewedDetail.chinese_meanings.join(", ")}</div>
+              {viewedDetail.example_sentence && (
+                <div className="quiz-answer-example">{viewedDetail.example_sentence}</div>
               )}
+              <div className="quiz-answer-hint">點選其他選項可查看該選項的單字</div>
             </div>
           )}
           {hasAnswered && (

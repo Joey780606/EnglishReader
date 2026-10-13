@@ -215,14 +215,21 @@ export async function deletePendingWord(id: number): Promise<void> {
   }
 }
 
+export interface QuizWordDetail {
+  vocabulary_id: number;
+  english_word: string;
+  part_of_speech: string | null;
+  chinese_meanings: string[];
+  example_sentence: string | null;
+}
+
 export interface QuizQuestion {
   vocabulary_id: number;
   english_word: string;
   options: string[];
   correct_index: number;
-  part_of_speech: string | null;
-  chinese_meanings: string[];
-  example_sentence: string | null;
+  /** option_details[i] is the vocabulary word that options[i] was taken from. */
+  option_details: QuizWordDetail[];
 }
 
 export async function fetchQuiz(count = 10): Promise<QuizQuestion[]> {

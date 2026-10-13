@@ -105,15 +105,22 @@ class PendingWordCreateSummary(BaseModel):
     items: List[PendingWordItem]
 
 
+class QuizWordDetail(BaseModel):
+    vocabulary_id: int
+    english_word: str
+    part_of_speech: Optional[str] = None
+    chinese_meanings: List[str]
+    example_sentence: Optional[str] = None
+
+
 class QuizQuestion(BaseModel):
     vocabulary_id: int
     english_word: str
     options: List[str]
     correct_index: int
-    # Full vocabulary details, shown after the question is answered.
-    part_of_speech: Optional[str] = None
-    chinese_meanings: List[str]
-    example_sentence: Optional[str] = None
+    # option_details[i] is the vocabulary word that options[i] was taken from,
+    # shown after the question is answered so the user can also learn the distractor words.
+    option_details: List[QuizWordDetail]
 
 
 class QuizResponse(BaseModel):
