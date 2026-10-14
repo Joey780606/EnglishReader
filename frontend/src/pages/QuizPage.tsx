@@ -121,12 +121,10 @@ export function QuizPage() {
           </div>
           {viewedDetail && (
             <div className="quiz-answer-detail">
-              <div>
-                <span className="quiz-answer-word">{viewedDetail.english_word}</span>
-                {viewedDetail.part_of_speech && (
-                  <span className="quiz-answer-pos">{viewedDetail.part_of_speech}</span>
-                )}
-              </div>
+              <div className="quiz-answer-word">{viewedDetail.english_word}</div>
+              {viewedDetail.part_of_speech && (
+                <div className="quiz-answer-pos">{viewedDetail.part_of_speech}</div>
+              )}
               <div>{viewedDetail.chinese_meanings.join(", ")}</div>
               {viewedDetail.example_sentence && (
                 <div className="quiz-answer-example">{viewedDetail.example_sentence}</div>

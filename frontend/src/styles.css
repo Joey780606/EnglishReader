@@ -361,7 +361,6 @@ button:disabled {
 }
 
 .quiz-answer-pos {
-  margin-left: 8px;
   color: #666;
   font-style: italic;
 }
